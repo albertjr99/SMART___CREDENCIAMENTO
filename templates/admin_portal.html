@@ -1,0 +1,2822 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Administrativo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0f172a;
+            --surface: #0d1b2e;
+            --surface-2: #0f2240;
+            --border: rgba(59,130,246,0.15);
+            --border-hover: rgba(59,130,246,0.4);
+            --text: #e2e8f0;
+            --text-muted: #64748b;
+            --text-sub: #94a3b8;
+            --blue: #3b82f6;
+            --blue-light: #60a5fa;
+            --green: #10b981;
+            --green-light: #34d399;
+            --amber: #f59e0b;
+            --amber-light: #fbbf24;
+            --red: #ef4444;
+            --red-light: #f87171;
+            --purple: #8b5cf6;
+            --purple-light: #a78bfa;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 4px 24px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.5);
+            --nav-height: 88px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100dvh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            overflow-x: hidden;
+        }
+
+        /* ─── CANVAS PARTICLES ─── */
+        #particles-canvas {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+
+        /* ─── NAVBAR ─── */
+        .navbar {
+            position: sticky; top: 0; z-index: 200;
+            height: var(--nav-height);
+            background: linear-gradient(135deg, #0a1628 0%, #0c2340 100%);
+            border-bottom: none;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 28px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .navbar::after {
+            content: ''; position: absolute; bottom: -6px; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, #1e3a5f, #3b82f6, #1e3a5f, transparent);
+        }
+        .nav-brand {
+            display: flex; align-items: center; gap: 12px;
+        }
+        .nav-logo-img {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        .nav-brand-text { font-size: 1.05rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; line-height: 1.1; }
+        .nav-brand-sub { font-size: 0.72rem; color: rgba(255, 255, 255, 0.88); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+        .nav-tabs {
+            display: flex; gap: 12px;
+        }
+        .nav-tab {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            text-decoration: none;
+            line-height: 1;
+            letter-spacing: 0.025em;
+            background: rgba(30, 41, 59, 0.8);
+            color: #ffffff;
+        }
+        .nav-tab:hover {
+            background: rgba(30, 41, 59, 1);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        .nav-tab.active {
+            background: linear-gradient(135deg, #0c2340 0%, #2c5282 100%);
+            border-color: rgba(216, 200, 155, 0.9);
+            color: #ffffff;
+            box-shadow: 0 0 0 1px rgba(216, 200, 155, 0.28);
+        }
+        .nav-actions { display: flex; align-items: center; gap: 24px; }
+        .nav-user-profile {
+            display: flex; align-items: center; gap: 16px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        .nav-user-profile:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .nav-user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #2c5282 0%, #4a8bc2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .nav-user-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #ffffff;
+            line-height: 1.1;
+        }
+        .nav-user-role {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.82);
+            margin-top: 2px;
+        }
+        .btn-logout {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            text-decoration: none;
+            line-height: 1;
+            letter-spacing: 0.025em;
+            background: rgba(30, 41, 59, 0.8);
+            color: #ffffff;
+        }
+        .btn-logout:hover {
+            background: rgba(30, 41, 59, 1);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        .profile-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 6, 23, 0.84);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2200;
+            backdrop-filter: blur(8px);
+            padding: 20px;
+        }
+        .profile-modal-overlay.active { display: flex; }
+        .profile-modal {
+            width: min(760px, 94vw);
+            max-height: 90vh;
+            overflow: hidden;
+            border-radius: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            background: linear-gradient(160deg, rgba(15,23,42,0.98), rgba(15,34,64,0.96));
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .profile-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+        }
+        .profile-modal-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f1f5f9;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .profile-modal-close {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            background: rgba(15, 23, 42, 0.7);
+            color: #cbd5e1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .profile-modal-close:hover {
+            background: rgba(30, 41, 59, 0.92);
+            border-color: rgba(148, 163, 184, 0.32);
+            color: #f8fafc;
+        }
+        .profile-modal-body {
+            padding: 22px 24px;
+            overflow-y: auto;
+        }
+        .profile-photo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .profile-photo-wrapper { position: relative; }
+        .profile-photo {
+            width: 90px;
+            height: 90px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #2c5282 0%, #4a8bc2 100%);
+            border: 2px solid rgba(255, 255, 255, 0.22);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-photo-edit {
+            position: absolute;
+            right: -6px;
+            bottom: -6px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border: 2px solid rgba(15, 23, 42, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        .profile-photo-edit input { display: none; }
+        .profile-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .profile-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .profile-form-group.full-width { grid-column: 1 / -1; }
+        .profile-form-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .profile-form-input {
+            width: 100%;
+            min-height: 42px;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            background: rgba(15, 23, 42, 0.74);
+            color: #e2e8f0;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .profile-form-input:focus {
+            border-color: rgba(96, 165, 250, 0.6);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+            background: rgba(15, 23, 42, 0.9);
+        }
+        .profile-form-input:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+        .profile-modal-footer {
+            padding: 14px 24px 20px;
+            border-top: 1px solid rgba(148, 163, 184, 0.15);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .profile-btn-cancel,
+        .profile-btn-save {
+            border-radius: 10px;
+            min-height: 40px;
+            padding: 0 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .profile-btn-cancel {
+            background: rgba(30, 41, 59, 0.82);
+            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .profile-btn-cancel:hover {
+            background: rgba(30, 41, 59, 1);
+            border-color: rgba(255, 255, 255, 0.28);
+        }
+        .profile-btn-save {
+            background: linear-gradient(135deg, #0c2340 0%, #2c5282 100%);
+            color: #ffffff;
+            border: 1px solid rgba(216, 200, 155, 0.6);
+        }
+        .profile-btn-save:hover {
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.28);
+            transform: translateY(-1px);
+        }
+        .profile-loading {
+            position: absolute;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(2, 6, 23, 0.78);
+            z-index: 4;
+        }
+        .profile-spinner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top-color: #60a5fa;
+            animation: profile-spin 0.8s linear infinite;
+        }
+        @keyframes profile-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ─── MAIN LAYOUT ─── */
+        .main { position: relative; z-index: 1; flex: 1; min-height: 0; overflow: hidden; }
+        .page { display: none; height: 100%; }
+        .page.active { display: block; }
+
+        .container {
+            max-width: 1400px; margin: 0 auto;
+            padding: 16px 22px 18px;
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* ─── PAGE HEADER ─── */
+        .page-header {
+            background: linear-gradient(135deg, rgba(13,27,46,0.8), rgba(15,34,64,0.6));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin-bottom: 0;
+            position: relative; overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+        .page-header::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent);
+        }
+        .page-header::after {
+            content: ''; position: absolute; top: -40%; right: -5%;
+            width: 280px; height: 280px;
+            background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .ph-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+        .ph-title { font-size: 1.6rem; font-weight: 800; color: #f1f5f9; display: flex; align-items: center; gap: 14px; }
+        .ph-icon {
+            width: 46px; height: 46px; border-radius: 13px;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, rgba(59,130,246,0.25), rgba(59,130,246,0.1));
+            border: 1px solid rgba(59,130,246,0.3);
+        }
+        .ph-sub { color: var(--text-sub); font-size: 0.9rem; margin-top: 6px; margin-left: 60px; }
+
+        /* ─── STAT CARDS ─── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, rgba(13,27,46,0.9), rgba(15,34,64,0.6));
+            border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 22px 24px;
+            position: relative; overflow: hidden;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(16px);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 10px 28px rgba(2, 8, 23, 0.38);
+        }
+        .stat-card:hover {
+            transform: perspective(1000px) translateY(-5px) rotateX(1.6deg);
+            border-color: var(--border-hover);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 18px 38px rgba(2, 8, 23, 0.55);
+        }
+        .stat-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+        }
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            right: -45px;
+            top: -45px;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(56,189,248,0.14), transparent 70%);
+            pointer-events: none;
+        }
+        .stat-accent {
+            width: 4px; height: 100%; position: absolute; left: 0; top: 0; border-radius: 16px 0 0 16px;
+        }
+        .stat-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .stat-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex: 0 0 40px;
+            margin-top: 1px;
+        }
+        .stat-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            line-height: 1.35;
+            margin-top: 2px;
+            max-width: calc(100% - 52px);
+        }
+        .stat-value { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+        .stat-delta { font-size: 0.75rem; color: var(--text-muted); }
+
+        /* ─── CARDS ─── */
+        .card {
+            background: linear-gradient(135deg, rgba(13,27,46,0.9), rgba(10,20,38,0.95));
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            backdrop-filter: blur(18px);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 12px 30px rgba(2,8,23,0.42);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .card:hover {
+            transform: perspective(1000px) translateY(-3px) rotateX(1deg);
+            border-color: rgba(59,130,246,0.35);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 20px 42px rgba(2,8,23,0.56);
+        }
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(148,163,184,0.08);
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        }
+        .card-title {
+            font-size: 1rem; font-weight: 700; color: #f1f5f9;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .card-title-icon {
+            width: 34px; height: 34px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.2);
+        }
+        .card-body { padding: 24px; }
+        .card-body-sm { padding: 16px 24px; }
+
+        /* ─── TWO-COL GRID ─── */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+        /* ─── TABLE ─── */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        thead th {
+            padding: 12px 16px; text-align: left;
+            font-size: 0.7rem; font-weight: 700; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.06em;
+            border-bottom: 1px solid rgba(148,163,184,0.1);
+            background: rgba(6,13,26,0.5);
+        }
+        tbody tr { border-bottom: 1px solid rgba(148,163,184,0.07); transition: background 0.2s; }
+        tbody tr:hover { background: rgba(59,130,246,0.05); }
+        tbody td { padding: 14px 16px; color: var(--text); vertical-align: middle; }
+        tbody tr:last-child { border-bottom: none; }
+
+        /* ─── BADGES ─── */
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 100px;
+            font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .badge-blue   { background: rgba(59,130,246,0.15);  color: var(--blue-light);   border: 1px solid rgba(59,130,246,0.25); }
+        .badge-green  { background: rgba(16,185,129,0.15);  color: var(--green-light);  border: 1px solid rgba(16,185,129,0.25); }
+        .badge-amber  { background: rgba(245,158,11,0.15);  color: var(--amber-light);  border: 1px solid rgba(245,158,11,0.25); }
+        .badge-red    { background: rgba(239,68,68,0.15);   color: var(--red-light);    border: 1px solid rgba(239,68,68,0.25); }
+        .badge-purple { background: rgba(139,92,246,0.15);  color: var(--purple-light); border: 1px solid rgba(139,92,246,0.25); }
+        .badge-gray   { background: rgba(100,116,139,0.15); color: #94a3b8;              border: 1px solid rgba(100,116,139,0.25); }
+
+        /* ─── BUTTONS ─── */
+        .btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 10px 18px; border-radius: var(--radius-sm);
+            font-size: 0.82rem; font-weight: 600; cursor: pointer;
+            border: none; transition: all 0.25s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue), var(--blue-light));
+            color: #fff; border: 1px solid rgba(59,130,246,0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59,130,246,0.35); }
+        .btn-success {
+            background: linear-gradient(135deg, var(--green), var(--green-light));
+            color: #fff; border: 1px solid rgba(16,185,129,0.3);
+        }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16,185,129,0.3); }
+        .btn-danger {
+            background: linear-gradient(135deg, var(--red), var(--red-light));
+            color: #fff; border: 1px solid rgba(239,68,68,0.3);
+        }
+        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(239,68,68,0.3); }
+        .btn-ghost {
+            background: rgba(255,255,255,0.07);
+            color: var(--text-sub); border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+        .btn-sm { padding: 7px 13px; font-size: 0.75rem; }
+        .btn-icon { padding: 8px; }
+
+        /* ─── FORM ─── */
+        .form-group { margin-bottom: 20px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-label {
+            display: block; font-size: 0.78rem; font-weight: 600;
+            color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+        .form-control {
+            width: 100%; padding: 12px 16px;
+            background: rgba(6,13,26,0.6); border: 1px solid rgba(148,163,184,0.2);
+            border-radius: var(--radius-sm); color: var(--text); font-size: 0.9rem;
+            font-family: inherit; transition: all 0.2s;
+        }
+        .form-control:focus {
+            outline: none; border-color: rgba(59,130,246,0.5);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+            background: rgba(6,13,26,0.8);
+        }
+        .form-control::placeholder { color: var(--text-muted); }
+        select.form-control option { background: #0d1b2e; }
+        .form-hint { font-size: 0.74rem; color: var(--text-muted); margin-top: 6px; }
+
+        /* ─── MODAL ─── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.75); backdrop-filter: blur(10px);
+            z-index: 500; align-items: center; justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: linear-gradient(135deg, rgba(15,27,50,0.98), rgba(8,17,35,0.99));
+            border: 1px solid rgba(59,130,246,0.25);
+            border-radius: 22px; padding: 36px;
+            width: 100%; max-width: 560px; max-height: 90vh;
+            overflow-y: auto; position: relative;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .modal-lg { max-width: 720px; }
+        @keyframes modalIn {
+            from { opacity:0; transform: translateY(-24px) scale(0.95); }
+            to   { opacity:1; transform: translateY(0) scale(1); }
+        }
+        .modal::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent);
+        }
+        .modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 28px;
+        }
+        .modal-title {
+            font-size: 1.3rem; font-weight: 800; color: #f1f5f9;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .modal-close {
+            width: 36px; height: 36px; border-radius: 9px;
+            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-sub); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .modal-close:hover { background: rgba(239,68,68,0.15); color: var(--red-light); }
+        .modal-footer {
+            display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px;
+            padding-top: 20px; border-top: 1px solid rgba(148,163,184,0.1);
+        }
+
+        /* ─── ENTITY LIST ─── */
+        .entity-item {
+            padding: 18px 20px;
+            border: 1px solid rgba(148,163,184,0.12);
+            border-radius: 13px; margin-bottom: 10px; cursor: pointer;
+            transition: all 0.3s; background: rgba(6,13,26,0.4);
+            position: relative; overflow: hidden;
+        }
+        .entity-item:hover { border-color: var(--border-hover); transform: translateX(3px); }
+        .entity-item.selected { border-color: rgba(59,130,246,0.5); background: rgba(59,130,246,0.08); }
+        .entity-name { font-weight: 700; font-size: 0.95rem; color: #f1f5f9; margin-bottom: 4px; }
+        .entity-meta { font-size: 0.78rem; color: var(--text-sub); line-height: 1.6; }
+
+        /* ─── SCROLLBAR ─── */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(148,163,184,0.07); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.25); border-radius: 3px; }
+
+        /* ─── DIVIDER ─── */
+        .divider { height: 1px; background: rgba(148,163,184,0.1); margin: 20px 0; }
+
+        /* ─── SEARCH ─── */
+        .search-box {
+            position: relative; margin-bottom: 16px;
+        }
+        .search-box input {
+            width: 100%; padding: 11px 16px 11px 42px;
+            background: rgba(6,13,26,0.6); border: 1px solid rgba(148,163,184,0.15);
+            border-radius: var(--radius-sm); color: var(--text); font-size: 0.875rem;
+            font-family: inherit; transition: all 0.2s;
+        }
+        .search-box input:focus {
+            outline: none; border-color: rgba(59,130,246,0.4);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+        .search-box input::placeholder { color: var(--text-muted); }
+        .search-icon {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); pointer-events: none;
+        }
+
+        /* ─── REVENUE CHART BARS ─── */
+        .bar-chart { display: flex; flex-direction: column; gap: 10px; padding: 4px 0; }
+        .bar-item { display: flex; align-items: center; gap: 14px; }
+        .bar-label { font-size: 0.8rem; color: var(--text-sub); min-width: 130px; }
+        .bar-track { flex: 1; height: 8px; background: rgba(148,163,184,0.1); border-radius: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 4px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+        .bar-val { font-size: 0.78rem; font-weight: 700; min-width: 80px; text-align: right; color: var(--text); }
+
+        /* ─── PROCESS STATUS DONUT ─── */
+        .donut-row { display: flex; align-items: center; gap: 20px; }
+        .donut-legend { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .legend-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .legend-label { font-size: 0.82rem; color: var(--text-sub); flex: 1; }
+        .legend-val { font-size: 0.85rem; font-weight: 700; color: var(--text); }
+
+        /* ─── PRICING TABLE ─── */
+        .price-input {
+            display: flex; align-items: center;
+            background: rgba(6,13,26,0.6); border: 1px solid rgba(148,163,184,0.2);
+            border-radius: var(--radius-sm); overflow: hidden;
+        }
+        .price-input span {
+            padding: 10px 12px; font-size: 0.85rem; font-weight: 600;
+            color: var(--green-light); background: rgba(16,185,129,0.1); border-right: 1px solid rgba(148,163,184,0.15);
+        }
+        .price-input input {
+            flex: 1; padding: 10px 12px;
+            background: transparent; border: none; color: var(--text);
+            font-size: 0.9rem; font-family: inherit;
+        }
+        .price-input input:focus { outline: none; }
+
+        /* ─── EMPTY STATE ─── */
+        .empty { text-align: center; padding: 48px 24px; color: var(--text-muted); }
+        .empty svg { opacity: 0.3; margin-bottom: 14px; }
+        .empty h3 { font-size: 1.1rem; color: var(--text-sub); margin-bottom: 8px; }
+        .empty p { font-size: 0.875rem; }
+
+        /* viewport-fit */
+        .page .two-col,
+        .page .three-col {
+            flex: 1;
+            min-height: 0;
+        }
+        .page .card {
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .page .card-body,
+        .page .card-body-sm,
+        .page .table-wrap {
+            min-height: 0;
+            overflow: auto;
+            flex: 1;
+        }
+        .page .table-wrap {
+            overflow: auto;
+        }
+
+        #page-dashboard .container {
+            display: grid;
+            grid-template-rows: auto auto minmax(0, 1fr) minmax(0, 1fr);
+            gap: 12px;
+        }
+        #page-dashboard .stats-grid {
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 10px;
+            margin: 0;
+        }
+        #page-dashboard .two-col {
+            min-height: 0;
+            gap: 12px;
+            margin-bottom: 0 !important;
+        }
+        #page-dashboard .stat-card {
+            padding: 12px;
+            border-radius: 12px;
+        }
+        #page-dashboard .stat-header {
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        #page-dashboard .stat-icon {
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+        }
+        #page-dashboard .stat-icon svg {
+            width: 14px;
+            height: 14px;
+        }
+        #page-dashboard .stat-label {
+            font-size: 0.62rem;
+            letter-spacing: 0.05em;
+            margin-top: 0;
+            max-width: none;
+        }
+        #page-dashboard .stat-value {
+            font-size: 1.05rem;
+            line-height: 1.05;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #page-dashboard .stat-delta {
+            font-size: 0.64rem;
+            line-height: 1.2;
+        }
+        #page-dashboard .card-header {
+            padding: 11px 14px;
+        }
+        #page-dashboard .card-body {
+            padding: 10px 12px;
+        }
+        #page-dashboard .bar-chart {
+            gap: 6px;
+        }
+        #page-dashboard .bar-label {
+            min-width: 88px;
+            font-size: 0.72rem;
+        }
+        #page-dashboard .bar-val {
+            min-width: 68px;
+            font-size: 0.7rem;
+        }
+        #page-dashboard .legend-label {
+            font-size: 0.74rem;
+        }
+        #page-dashboard .legend-val {
+            font-size: 0.76rem;
+        }
+        #page-dashboard thead th,
+        #page-dashboard tbody td {
+            padding: 8px 10px;
+            font-size: 0.72rem;
+        }
+
+        #page-entities .container,
+        #page-pricing .container,
+        #page-processes .container,
+        #page-users .container {
+            display: grid;
+            grid-template-rows: auto minmax(0, 1fr);
+            gap: 12px;
+        }
+        #page-processes .card {
+            flex: 1;
+        }
+
+        /* ─── TOAST ─── */
+        #toast-container {
+            position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .toast {
+            background: rgba(13,27,46,0.97); border: 1px solid var(--border);
+            border-radius: 12px; padding: 14px 20px;
+            display: flex; align-items: center; gap: 12px;
+            font-size: 0.875rem; box-shadow: var(--shadow-lg);
+            animation: toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            max-width: 340px;
+        }
+        @keyframes toastIn {
+            from { opacity:0; transform: translateX(40px); }
+            to   { opacity:1; transform: translateX(0); }
+        }
+        .toast-success { border-color: rgba(16,185,129,0.3); }
+        .toast-error   { border-color: rgba(239,68,68,0.3); }
+        .toast-info    { border-color: rgba(59,130,246,0.3); }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 1024px) {
+            .three-col { grid-template-columns: 1fr 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            #page-dashboard .stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @media (max-width: 768px) {
+            .navbar { padding: 0 18px; }
+            .nav-tabs { display: none; }
+            .container { padding: 12px 14px; }
+            .two-col, .three-col { grid-template-columns: 1fr; }
+            #page-dashboard .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 480px) {
+            .container { padding: 10px 10px 12px; }
+            #page-dashboard .stats-grid { grid-template-columns: 1fr; }
+            .ph-title { font-size: 1.2rem; }
+        }
+        @media (max-height: 900px) {
+            :root {
+                --nav-height: 76px;
+            }
+            .navbar {
+                padding: 0 18px;
+            }
+            .nav-logo-img {
+                width: 52px;
+                height: 52px;
+            }
+            .nav-tab {
+                padding: 9px 14px;
+                font-size: 0.78rem;
+            }
+            .container {
+                padding: 10px 14px;
+                gap: 10px;
+            }
+            .page-header {
+                padding: 12px 16px;
+            }
+            .ph-title {
+                font-size: 1.3rem;
+            }
+            .ph-sub {
+                font-size: 0.78rem;
+                margin-left: 0;
+            }
+            #page-dashboard .stat-card {
+                padding: 9px 10px;
+            }
+            #page-dashboard .stat-value {
+                font-size: 0.92rem;
+            }
+            #page-dashboard .card-header {
+                padding: 9px 11px;
+            }
+            #page-dashboard .card-body {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="particles-canvas"></canvas>
+
+<!-- ─── NAVBAR ─── -->
+<nav class="navbar">
+    <div class="nav-brand">
+        <img src="/static/images/s%C3%B3%20o%20simbolo.png?v=10"
+             alt="Logo"
+             class="nav-logo-img"
+             onerror="this.style.display='none'">
+        <div>
+            <div class="nav-brand-text">Portal Administrativo</div>
+            <div class="nav-brand-sub">CONTROLE ADMINISTRATIVO</div>
+        </div>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="switchPage('dashboard')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+        </button>
+        <button class="nav-tab" onclick="switchPage('entities')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Cadastros
+        </button>
+        <button class="nav-tab" onclick="switchPage('pricing')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Precificação
+        </button>
+        <button class="nav-tab" onclick="switchPage('processes')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Processos
+        </button>
+        <button class="nav-tab" onclick="switchPage('users')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Usuários
+        </button>
+    </div>
+
+    <div class="nav-actions">
+        <div class="nav-user-profile" onclick="openProfileModal()" title="Clique para editar seu perfil">
+            <div class="nav-user-avatar" id="admin-avatar">A</div>
+            <div>
+                <div class="nav-user-name" id="admin-name">ADMINISTRADOR</div>
+                <div class="nav-user-role">ADMIN</div>
+            </div>
+        </div>
+        <a href="/logout" class="btn-logout">
+            Sair
+        </a>
+    </div>
+</nav>
+
+<main class="main">
+
+<!-- 
+     PAGE: DASHBOARD
+ -->
+<div class="page active" id="page-dashboard">
+<div class="container">
+
+    <div class="page-header">
+        <div class="ph-row">
+            <div>
+                <div class="ph-title">
+                    <div class="ph-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+                    Visão Geral
+                </div>
+                <div class="ph-sub">Monitoramento em tempo real de todas as métricas do sistema</div>
+            </div>
+            <button class="btn btn-primary" onclick="loadDashboard()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Atualizar
+            </button>
+        </div>
+    </div>
+
+    <!-- KPI Row 1 -->
+    <div class="stats-grid" id="kpi-grid">
+        <div class="stat-card">
+            <div class="stat-accent" style="background: linear-gradient(180deg,#3b82f6,#60a5fa);"></div>
+            <div class="stat-header">
+                <div class="stat-icon" style="background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.2);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+                <div class="stat-label">Inst. Financeiras</div>
+            </div>
+            <div class="stat-value" id="kpi-ifs" style="color:#60a5fa;">—</div>
+            <div class="stat-delta">cadastradas no sistema</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-accent" style="background: linear-gradient(180deg,#10b981,#34d399);"></div>
+            <div class="stat-header">
+                <div class="stat-icon" style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.2);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div class="stat-label">RPPS Cadastrados</div>
+            </div>
+            <div class="stat-value" id="kpi-rpps" style="color:#34d399;">—</div>
+            <div class="stat-delta">entes previdenciários</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-accent" style="background: linear-gradient(180deg,#f59e0b,#fbbf24);"></div>
+            <div class="stat-header">
+                <div class="stat-icon" style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.2);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="stat-label">Receita Recebida</div>
+            </div>
+            <div class="stat-value" id="kpi-receita" style="color:#fbbf24;">—</div>
+            <div class="stat-delta">valor contratado/mês</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-accent" style="background: linear-gradient(180deg,#8b5cf6,#a78bfa);"></div>
+            <div class="stat-header">
+                <div class="stat-icon" style="background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.2);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                </div>
+                <div class="stat-label">Projeção Anual</div>
+            </div>
+            <div class="stat-value" id="kpi-anual" style="color:#a78bfa;">—</div>
+            <div class="stat-delta">saldo pendente anual</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-accent" style="background: linear-gradient(180deg,#ef4444,#f87171);"></div>
+            <div class="stat-header">
+                <div class="stat-icon" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.2);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="stat-label">Total Processos</div>
+            </div>
+            <div class="stat-value" id="kpi-processos" style="color:#f87171;">—</div>
+            <div class="stat-delta">credenciamentos no sistema</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-accent" style="background: linear-gradient(180deg,#06b6d4,#67e8f9);"></div>
+            <div class="stat-header">
+                <div class="stat-icon" style="background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.2);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#67e8f9" stroke-width="2.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div class="stat-label">Em Análise</div>
+            </div>
+            <div class="stat-value" id="kpi-analise" style="color:#67e8f9;">—</div>
+            <div class="stat-delta">aguardando revisão</div>
+        </div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="two-col" style="margin-bottom:24px;">
+        <!-- Receita por serviço -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-title-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+                    Receita por Tipo de Serviço
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="bar-chart" id="bar-chart-services"></div>
+            </div>
+        </div>
+
+        <!-- Processos por status -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-title-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+                    Processos por Status
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="donut-row">
+                    <canvas id="donut-canvas" width="120" height="120"></canvas>
+                    <div class="donut-legend" id="donut-legend"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Instituições + Recentes -->
+    <div class="two-col">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-title-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><polyline points="18 20 22 16 18 12"/><line x1="2" y1="16" x2="22" y2="16"/><polyline points="6 4 2 8 6 12"/><line x1="22" y1="8" x2="2" y2="8"/></svg></div>
+                    Maiores Contratos
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Entidade</th><th>Tipo</th><th>Serviços</th><th>Total/mês</th></tr></thead>
+                    <tbody id="top-institutions-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-title-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                    Últimos Cadastros
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Nome</th><th>Tipo</th><th>Cadastro</th><th>Status</th></tr></thead>
+                    <tbody id="recent-entities-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!-- 
+     PAGE: CADASTROS
+ -->
+<div class="page" id="page-entities">
+<div class="container">
+
+    <div class="page-header">
+        <div class="ph-row">
+            <div>
+                <div class="ph-title">
+                    <div class="ph-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                    Cadastro de Entidades
+                </div>
+                <div class="ph-sub">Gerencie todas as Instituições Financeiras e RPPS do sistema</div>
+            </div>
+            <button class="btn btn-primary" onclick="openRegisterModal()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Nova Entidade
+            </button>
+        </div>
+    </div>
+
+    <div class="two-col">
+        <!-- Lista -->
+        <div class="card" style="height:fit-content;">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-title-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+                    Entidades Cadastradas
+                </div>
+                <span class="badge badge-blue" id="entities-count">0</span>
+            </div>
+            <div class="card-body-sm">
+                <div class="search-box">
+                    <div class="search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+                    <input type="text" placeholder="Buscar entidade..." id="entity-search" oninput="filterEntities()">
+                </div>
+                <div style="margin-bottom:10px;display:flex;gap:8px;">
+                    <button class="btn btn-ghost btn-sm" onclick="filterByType('all')" id="filter-all" style="border-color:rgba(59,130,246,0.4);color:var(--blue-light);">Todos</button>
+                    <button class="btn btn-ghost btn-sm" onclick="filterByType('financial_institution')" id="filter-fi">IF</button>
+                    <button class="btn btn-ghost btn-sm" onclick="filterByType('rpps')" id="filter-rpps">RPPS</button>
+                </div>
+                <div id="entities-list" style="max-height:500px;overflow-y:auto;padding-right:4px;"></div>
+            </div>
+        </div>
+
+        <!-- Detalhe -->
+        <div class="card" id="entity-detail-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-title-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></div>
+                    <span id="detail-title">Selecione uma entidade</span>
+                </div>
+                <div id="detail-header-actions" style="display:none;gap:8px;display:none;">
+                    <button class="btn btn-ghost btn-sm" onclick="openEditModal()">Editar</button>
+                    <button class="btn btn-danger btn-sm" onclick="confirmDeleteEntity()">Remover</button>
+                </div>
+            </div>
+            <div class="card-body" id="entity-detail-body">
+                <div class="empty">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <h3>Nenhuma entidade selecionada</h3>
+                    <p>Clique em uma entidade na lista para ver os detalhes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!-- 
+     PAGE: PRECIFICAÇÃO
+ -->
+<div class="page" id="page-pricing">
+<div class="container">
+
+    <div class="page-header">
+        <div class="ph-row">
+            <div>
+                <div class="ph-title">
+                    <div class="ph-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                    Precificação
+                </div>
+                <div class="ph-sub">Defina os preços acordados com cada Instituição Financeira</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="two-col">
+        <!-- Seleção de instituição -->
+        <div class="card" style="height:fit-content;">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-title-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+                    Selecionar Entidade
+                </div>
+            </div>
+            <div class="card-body-sm">
+                <div class="search-box">
+                    <div class="search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+                    <input type="text" placeholder="Buscar..." id="pricing-search" oninput="filterPricingEntities()">
+                </div>
+                <div id="pricing-entity-list" style="max-height:480px;overflow-y:auto;padding-right:4px;"></div>
+            </div>
+        </div>
+
+        <!-- Tabela de preços -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-title-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                    <span id="pricing-entity-title">Preços Acordados</span>
+                </div>
+            </div>
+            <div class="card-body" id="pricing-body">
+                <div class="empty">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <h3>Nenhuma entidade selecionada</h3>
+                    <p>Selecione uma entidade para definir os preços</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!-- 
+     PAGE: PROCESSOS
+ -->
+<div class="page" id="page-processes">
+<div class="container">
+
+    <div class="page-header">
+        <div class="ph-row">
+            <div>
+                <div class="ph-title">
+                    <div class="ph-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                    Todos os Processos
+                </div>
+                <div class="ph-sub">Visão global de todos os credenciamentos do sistema</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;">
+                <select class="form-control" id="proc-filter-status" onchange="loadProcesses()" style="width:160px;padding:9px 14px;">
+                    <option value="">Todos os status</option>
+                    <option value="draft">Rascunho</option>
+                    <option value="submitted">Enviado</option>
+                    <option value="in_review">Em Análise</option>
+                    <option value="returned">Devolvido</option>
+                    <option value="approved">Aprovado</option>
+                    <option value="rejected">Rejeitado</option>
+                </select>
+                <input class="form-control" type="text" id="proc-search" placeholder="Buscar..." oninput="filterProcessesTable()" style="width:200px;padding:9px 14px;">
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Instituição Financeira</th>
+                        <th>RPPS</th>
+                        <th>Tipo</th>
+                        <th>Status</th>
+                        <th>Docs</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody id="processes-tbody">
+                    <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:40px;">Carregando...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!-- 
+     PAGE: USURIOS
+ -->
+<div class="page" id="page-users">
+<div class="container">
+
+    <div class="page-header">
+        <div class="ph-row">
+            <div>
+                <div class="ph-title">
+                    <div class="ph-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                    Usuários por Entidade
+                </div>
+                <div class="ph-sub">Gerencie os usuários vinculados a cada IF ou RPPS</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="two-col">
+        <div class="card" style="height:fit-content;">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-title-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+                    Entidades
+                </div>
+            </div>
+            <div class="card-body-sm">
+                <div id="users-entity-list" style="max-height:500px;overflow-y:auto;padding-right:4px;"></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-title-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                    <span id="users-entity-title">Selecione uma entidade</span>
+                </div>
+                <button class="btn btn-primary btn-sm" id="btn-add-user" style="display:none;" onclick="openAddUserModal()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Adicionar
+                </button>
+            </div>
+            <div id="users-slots-container" class="card-body">
+                <div class="empty">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    <h3>Nenhuma entidade selecionada</h3>
+                    <p>Selecione uma entidade ao lado para ver os usuários</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</main>
+
+<!-- 
+     MODALS
+ -->
+
+<!-- Modal: Registrar Nova Entidade -->
+<div class="modal-overlay" id="modal-register">
+<div class="modal modal-lg">
+    <div class="modal-header">
+        <div class="modal-title">
+            <div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></div>
+            Cadastrar Nova Entidade
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-register')">✕</button>
+    </div>
+    <form id="form-register" onsubmit="submitRegister(event)">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Tipo de Entidade *</label>
+                <select class="form-control" id="reg-role" required>
+                    <option value="">Selecione...</option>
+                    <option value="financial_institution">Instituição Financeira</option>
+                    <option value="rpps">RPPS</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">CNPJ *</label>
+                <input type="text" class="form-control" id="reg-cnpj" placeholder="00.000.000/0001-00" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Nome / Razão Social *</label>
+                <input type="text" class="form-control" id="reg-name" placeholder="Nome completo da entidade" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nome Fantasia</label>
+                <input type="text" class="form-control" id="reg-razao" placeholder="Nome fantasia (opcional)">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">E-mail de Acesso *</label>
+                <input type="email" class="form-control" id="reg-email" placeholder="email@entidade.com" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone</label>
+                <input type="text" class="form-control" id="reg-telefone" placeholder="(00) 00000-0000">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Cidade</label>
+                <input type="text" class="form-control" id="reg-cidade" placeholder="Cidade">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Estado</label>
+                <select class="form-control" id="reg-estado">
+                    <option value="">UF</option>
+                    <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                    <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                    <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                    <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                    <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                    <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                    <option>SP</option><option>SE</option><option>TO</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Endereço</label>
+                <input type="text" class="form-control" id="reg-endereco" placeholder="Logradouro, número">
+            </div>
+            <div class="form-group">
+                <label class="form-label">CEP</label>
+                <input type="text" class="form-control" id="reg-cep" placeholder="00000-000">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Senha de Acesso *</label>
+                <input type="password" class="form-control" id="reg-password" placeholder="Senha inicial" required>
+                <div class="form-hint">O usuário poderá alterar após o primeiro login</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Confirmar Senha *</label>
+                <input type="password" class="form-control" id="reg-password2" placeholder="Confirme a senha" required>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" onclick="closeModal('modal-register')">Cancelar</button>
+            <button type="submit" class="btn btn-primary">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Cadastrar Entidade
+            </button>
+        </div>
+    </form>
+</div>
+</div>
+
+<!-- Modal: Editar Entidade -->
+<div class="modal-overlay" id="modal-edit">
+<div class="modal modal-lg">
+    <div class="modal-header">
+        <div class="modal-title">
+            <div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+            Editar Entidade
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-edit')">✕</button>
+    </div>
+    <form id="form-edit" onsubmit="submitEdit(event)">
+        <input type="hidden" id="edit-id">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Nome / Razão Social</label>
+                <input type="text" class="form-control" id="edit-name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">E-mail</label>
+                <input type="email" class="form-control" id="edit-email">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">CNPJ</label>
+                <input type="text" class="form-control" id="edit-cnpj">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone</label>
+                <input type="text" class="form-control" id="edit-telefone">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Cidade</label>
+                <input type="text" class="form-control" id="edit-cidade">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Estado</label>
+                <input type="text" class="form-control" id="edit-estado">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Endereço</label>
+                <input type="text" class="form-control" id="edit-endereco">
+            </div>
+            <div class="form-group">
+                <label class="form-label">CEP</label>
+                <input type="text" class="form-control" id="edit-cep">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-control" id="edit-active">
+                <option value="1">Ativo</option>
+                <option value="0">Inativo</option>
+            </select>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" onclick="closeModal('modal-edit')">Cancelar</button>
+            <button type="submit" class="btn btn-primary">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Salvar Alterações
+            </button>
+        </div>
+    </form>
+</div>
+</div>
+
+<!-- Modal: Adicionar Usuário -->
+<div class="modal-overlay" id="modal-add-user">
+<div class="modal">
+    <div class="modal-header">
+        <div class="modal-title">
+            <div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></div>
+            Adicionar Usuário
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-add-user')">✕</button>
+    </div>
+    <form id="form-add-user" onsubmit="submitAddUser(event)">
+        <input type="hidden" id="add-user-entity-id">
+        <div class="form-group">
+            <label class="form-label">Nome Completo *</label>
+            <input type="text" class="form-control" id="add-user-name" placeholder="Nome do usuário" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label">E-mail *</label>
+            <input type="email" class="form-control" id="add-user-email" placeholder="email@usuario.com" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label">CPF</label>
+            <input type="text" class="form-control" id="add-user-cpf" placeholder="000.000.000-00">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Senha Temporária *</label>
+            <input type="password" class="form-control" id="add-user-password" value="temp123" required>
+            <div class="form-hint">O usuário poderá alterar após o primeiro login</div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" onclick="closeModal('modal-add-user')">Cancelar</button>
+            <button type="submit" class="btn btn-primary">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Adicionar
+            </button>
+        </div>
+    </form>
+</div>
+</div>
+
+<!-- Modal: Token Reset -->
+<div class="modal-overlay" id="modal-token">
+<div class="modal">
+    <div class="modal-header">
+        <div class="modal-title">
+            <div class="ph-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            Token de Redefinição
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-token')">✕</button>
+    </div>
+    <p style="color:var(--text-sub);margin-bottom:12px;">Envie o link abaixo para o usuário redefinir a senha:</p>
+    <div style="background:rgba(6,13,26,0.8);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:16px;word-break:break-all;font-family:monospace;font-size:0.8rem;color:var(--blue-light);line-height:1.6;" id="token-url-display"></div>
+    <p style="margin-top:12px;font-size:0.8rem;color:var(--text-muted);">Válido por 24 horas</p>
+    <div class="modal-footer">
+        <button class="btn btn-primary" onclick="copyTokenUrl()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copiar Link
+        </button>
+        <button class="btn btn-ghost" onclick="closeModal('modal-token')">Fechar</button>
+    </div>
+</div>
+</div>
+
+<!-- Modal de Perfil -->
+<div id="profileModal" class="profile-modal-overlay">
+<div class="profile-modal">
+    <div id="profileLoading" class="profile-loading">
+        <div class="profile-spinner"></div>
+    </div>
+    <div class="profile-modal-header">
+        <h2 class="profile-modal-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+            Meu Perfil
+        </h2>
+        <button class="profile-modal-close" onclick="closeProfileModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+    <div class="profile-modal-body">
+        <div class="profile-photo-section">
+            <div class="profile-photo-wrapper">
+                <div class="profile-photo" id="profilePhotoDisplay">A</div>
+                <label class="profile-photo-edit">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <input type="file" id="profilePhotoInput" accept="image/*" onchange="uploadProfilePhoto(this)">
+                </label>
+            </div>
+            <p style="color:#64748b;font-size:0.84rem;">Clique no icone da camera para alterar sua foto</p>
+        </div>
+
+        <form id="profileForm" class="profile-form-grid">
+            <div class="profile-form-group full-width">
+                <label class="profile-form-label">Nome / Razao Social</label>
+                <input type="text" class="profile-form-input" id="profileName" placeholder="Seu nome completo">
+            </div>
+            <div class="profile-form-group full-width">
+                <label class="profile-form-label">Razao Social (se aplicavel)</label>
+                <input type="text" class="profile-form-input" id="profileRazaoSocial" placeholder="Razao social da empresa">
+            </div>
+            <div class="profile-form-group">
+                <label class="profile-form-label">CPF/CNPJ</label>
+                <input type="text" class="profile-form-input" id="profileCpfCnpj" disabled placeholder="Nao editavel">
+            </div>
+            <div class="profile-form-group">
+                <label class="profile-form-label">Email de Acesso</label>
+                <input type="email" class="profile-form-input" id="profileEmail" disabled placeholder="Nao editavel">
+            </div>
+            <div class="profile-form-group full-width">
+                <label class="profile-form-label">Email Institucional</label>
+                <input type="email" class="profile-form-input" id="profileEmailInstitucional" placeholder="email@instituicao.com.br">
+            </div>
+            <div class="profile-form-group">
+                <label class="profile-form-label">Telefone</label>
+                <input type="tel" class="profile-form-input" id="profileTelefone" placeholder="(00) 00000-0000">
+            </div>
+            <div class="profile-form-group">
+                <label class="profile-form-label">CEP</label>
+                <input type="text" class="profile-form-input" id="profileCep" placeholder="00000-000" maxlength="9" onkeyup="buscarCep(this.value)">
+            </div>
+            <div class="profile-form-group full-width">
+                <label class="profile-form-label">Endereco</label>
+                <input type="text" class="profile-form-input" id="profileEndereco" placeholder="Rua, numero, complemento">
+            </div>
+            <div class="profile-form-group">
+                <label class="profile-form-label">Cidade</label>
+                <input type="text" class="profile-form-input" id="profileCidade" placeholder="Cidade">
+            </div>
+            <div class="profile-form-group">
+                <label class="profile-form-label">Estado</label>
+                <select class="profile-form-input" id="profileEstado">
+                    <option value="">Selecione</option>
+                    <option value="AC">Acre</option>
+                    <option value="AL">Alagoas</option>
+                    <option value="AP">Amapa</option>
+                    <option value="AM">Amazonas</option>
+                    <option value="BA">Bahia</option>
+                    <option value="CE">Ceara</option>
+                    <option value="DF">Distrito Federal</option>
+                    <option value="ES">Espirito Santo</option>
+                    <option value="GO">Goias</option>
+                    <option value="MA">Maranhao</option>
+                    <option value="MT">Mato Grosso</option>
+                    <option value="MS">Mato Grosso do Sul</option>
+                    <option value="MG">Minas Gerais</option>
+                    <option value="PA">Para</option>
+                    <option value="PB">Paraiba</option>
+                    <option value="PR">Parana</option>
+                    <option value="PE">Pernambuco</option>
+                    <option value="PI">Piaui</option>
+                    <option value="RJ">Rio de Janeiro</option>
+                    <option value="RN">Rio Grande do Norte</option>
+                    <option value="RS">Rio Grande do Sul</option>
+                    <option value="RO">Rondonia</option>
+                    <option value="RR">Roraima</option>
+                    <option value="SC">Santa Catarina</option>
+                    <option value="SP">Sao Paulo</option>
+                    <option value="SE">Sergipe</option>
+                    <option value="TO">Tocantins</option>
+                </select>
+            </div>
+        </form>
+    </div>
+    <div class="profile-modal-footer">
+        <button class="profile-btn-cancel" onclick="closeProfileModal()">Cancelar</button>
+        <button class="profile-btn-save" onclick="saveProfile()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                <polyline points="17,21 17,13 7,13 7,21"/>
+                <polyline points="7,3 7,8 15,8"/>
+            </svg>
+            Salvar Alteracoes
+        </button>
+    </div>
+</div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<script>
+// 
+// PARTICLES
+// 
+(function() {
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    for (let i = 0; i < 55; i++) particles.push({
+        x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 1.5 + 0.5, a: Math.random() * 0.4 + 0.1
+    });
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(96,165,250,${p.a})`; ctx.fill();
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        });
+        particles.forEach((p, i) => particles.slice(i+1).forEach(q => {
+            const d = Math.hypot(p.x-q.x, p.y-q.y);
+            if (d < 120) {
+                ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+                ctx.strokeStyle = `rgba(96,165,250,${0.06 * (1 - d/120)})`; ctx.lineWidth = 0.5; ctx.stroke();
+            }
+        }));
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// 
+// GLOBAL STATE
+// 
+let allEntities = [];
+let selectedEntityId = null;
+let selectedEntityData = null;
+let pricingEntityId = null;
+let usersEntityId = null;
+let allProcesses = [];
+let tokenUrlValue = '';
+
+// 
+// NAVIGATION
+// 
+function switchPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    document.querySelectorAll('.nav-tab').forEach(t => {
+        if (t.textContent.trim().toLowerCase().includes(name === 'dashboard' ? 'dashboard'
+            : name === 'entities' ? 'cadastro' : name === 'pricing' ? 'precif'
+            : name === 'processes' ? 'processo' : 'usuár')) t.classList.add('active');
+    });
+    if (name === 'dashboard') loadDashboard();
+    if (name === 'entities') loadEntities();
+    if (name === 'pricing') loadPricingEntities();
+    if (name === 'processes') loadProcesses();
+    if (name === 'users') loadUsersEntityList();
+}
+
+// 
+// TOAST
+// 
+function toast(msg, type = 'info') {
+    const icons = {
+        success: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>',
+        error:   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+        info:    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+    };
+    const t = document.createElement('div');
+    t.className = `toast toast-${type}`;
+    t.innerHTML = icons[type] + '<span>' + msg + '</span>';
+    document.getElementById('toast-container').appendChild(t);
+    setTimeout(() => t.remove(), 4000);
+}
+
+// 
+// PROFILE MODAL
+// 
+function openProfileModal() {
+    const modal = document.getElementById('profileModal');
+    if (!modal) return;
+    modal.classList.add('active');
+    loadProfileData();
+}
+
+function closeProfileModal() {
+    const modal = document.getElementById('profileModal');
+    if (!modal) return;
+    modal.classList.remove('active');
+}
+
+async function loadProfileData() {
+    const loading = document.getElementById('profileLoading');
+    if (loading) loading.style.display = 'flex';
+    try {
+        const response = await fetch('/api/profile');
+        const data = await response.json();
+        if (!data.success) {
+            toast(data.error || 'Erro ao carregar perfil', 'error');
+            return;
+        }
+
+        const profile = data.profile || {};
+        document.getElementById('profileName').value = profile.name || '';
+        document.getElementById('profileRazaoSocial').value = profile.razao_social || '';
+        document.getElementById('profileCpfCnpj').value = profile.cpf_cnpj || '';
+        document.getElementById('profileEmail').value = profile.email || '';
+        document.getElementById('profileEmailInstitucional').value = profile.email_institucional || '';
+        document.getElementById('profileTelefone').value = profile.telefone || '';
+        document.getElementById('profileEndereco').value = profile.endereco || '';
+        document.getElementById('profileCidade').value = profile.cidade || '';
+        document.getElementById('profileEstado').value = profile.estado || '';
+        document.getElementById('profileCep').value = profile.cep || '';
+
+        const shortName = ((profile.name || '').split(' ')[0] || '').toUpperCase();
+        const navNameEl = document.getElementById('admin-name');
+        if (navNameEl && shortName) navNameEl.textContent = shortName;
+
+        const navAvatar = document.getElementById('admin-avatar');
+        const modalPhoto = document.getElementById('profilePhotoDisplay');
+        if (profile.foto_perfil) {
+            const imagePath = `/${profile.foto_perfil}`;
+            if (modalPhoto) modalPhoto.innerHTML = `<img src="${imagePath}" alt="Foto de perfil">`;
+            if (navAvatar) navAvatar.innerHTML = `<img src="${imagePath}" alt="Foto" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`;
+        } else {
+            const letter = shortName.charAt(0) || 'A';
+            if (modalPhoto) modalPhoto.textContent = letter;
+            if (navAvatar) navAvatar.textContent = letter;
+        }
+    } catch (error) {
+        console.error('Erro ao carregar perfil:', error);
+        toast('Erro ao carregar dados do perfil', 'error');
+    } finally {
+        if (loading) loading.style.display = 'none';
+    }
+}
+
+async function saveProfile() {
+    const loading = document.getElementById('profileLoading');
+    if (loading) loading.style.display = 'flex';
+
+    const profileData = {
+        name: document.getElementById('profileName').value,
+        razao_social: document.getElementById('profileRazaoSocial').value,
+        email_institucional: document.getElementById('profileEmailInstitucional').value,
+        telefone: document.getElementById('profileTelefone').value,
+        endereco: document.getElementById('profileEndereco').value,
+        cidade: document.getElementById('profileCidade').value,
+        estado: document.getElementById('profileEstado').value,
+        cep: document.getElementById('profileCep').value
+    };
+
+    try {
+        const response = await fetch('/api/profile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(profileData)
+        });
+        const data = await response.json();
+        if (!data.success) {
+            toast(data.error || 'Erro ao salvar perfil', 'error');
+            return;
+        }
+
+        const shortName = (profileData.name || '').split(' ')[0].toUpperCase();
+        if (shortName) {
+            document.getElementById('admin-name').textContent = shortName;
+            if (!document.querySelector('#admin-avatar img')) {
+                document.getElementById('admin-avatar').textContent = shortName.charAt(0);
+            }
+        }
+
+        toast('Perfil atualizado com sucesso!', 'success');
+        closeProfileModal();
+    } catch (error) {
+        console.error('Erro ao salvar perfil:', error);
+        toast('Erro ao salvar perfil', 'error');
+    } finally {
+        if (loading) loading.style.display = 'none';
+    }
+}
+
+async function uploadProfilePhoto(input) {
+    if (!input.files || !input.files[0]) return;
+    const loading = document.getElementById('profileLoading');
+    if (loading) loading.style.display = 'flex';
+
+    const formData = new FormData();
+    formData.append('photo', input.files[0]);
+
+    try {
+        const response = await fetch('/api/profile/photo', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        if (!data.success) {
+            toast(data.error || 'Erro ao enviar foto', 'error');
+            return;
+        }
+
+        const photoUrl = data.photo_url;
+        document.getElementById('profilePhotoDisplay').innerHTML = `<img src="${photoUrl}" alt="Foto de perfil">`;
+        document.getElementById('admin-avatar').innerHTML = `<img src="${photoUrl}" alt="Foto" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`;
+        toast('Foto atualizada com sucesso!', 'success');
+    } catch (error) {
+        console.error('Erro ao enviar foto:', error);
+        toast('Erro ao enviar foto', 'error');
+    } finally {
+        if (loading) loading.style.display = 'none';
+    }
+}
+
+async function buscarCep(cep) {
+    const cleanCep = (cep || '').replace(/\D/g, '');
+    if (cleanCep.length !== 8) return;
+    try {
+        const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await response.json();
+        if (!data.erro) {
+            document.getElementById('profileEndereco').value = data.logradouro || '';
+            document.getElementById('profileCidade').value = data.localidade || '';
+            document.getElementById('profileEstado').value = data.uf || '';
+        }
+    } catch (error) {
+        console.log('Erro ao buscar CEP');
+    }
+}
+
+document.getElementById('profileTelefone')?.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 11) value = value.slice(0, 11);
+    if (value.length > 6) {
+        value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+    } else if (value.length > 2) {
+        value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+    } else if (value.length > 0) {
+        value = `(${value}`;
+    }
+    e.target.value = value;
+});
+
+document.getElementById('profileCep')?.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 8) value = value.slice(0, 8);
+    if (value.length > 5) value = `${value.slice(0, 5)}-${value.slice(5)}`;
+    e.target.value = value;
+});
+
+document.getElementById('profileModal')?.addEventListener('click', function(e) {
+    if (e.target === this) closeProfileModal();
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && document.getElementById('profileModal')?.classList.contains('active')) {
+        closeProfileModal();
+    }
+});
+
+// 
+// MODAL HELPERS
+// 
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// 
+// HELPERS
+// 
+function fmtCurrency(v) {
+    return 'R$ ' + (v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtDate(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString('pt-BR');
+}
+function roleBadge(role) {
+    if (role === 'financial') return '<span class="badge badge-amber">IF</span>';
+    if (role === 'financial_institution') return '<span class="badge badge-amber">IF</span>';
+    if (role === 'rpps') return '<span class="badge badge-green">RPPS</span>';
+    return '<span class="badge badge-gray">' + role + '</span>';
+}
+function statusBadge(status) {
+    const map = {
+        draft: ['badge-gray', 'Rascunho'],
+        submitted: ['badge-blue', 'Enviado'],
+        in_review: ['badge-amber', 'Em Análise'],
+        returned: ['badge-purple', 'Devolvido'],
+        approved: ['badge-green', 'Aprovado'],
+        rejected: ['badge-red', 'Rejeitado']
+    };
+    const [cls, label] = map[status] || ['badge-gray', status];
+    return `<span class="badge ${cls}">${label}</span>`;
+}
+
+// 
+// DASHBOARD
+// 
+async function loadDashboard() {
+    try {
+        const d = await fetch('/api/admin/revenue-dashboard').then(r => r.json());
+
+        document.getElementById('kpi-ifs').textContent = d.total_ifs;
+        document.getElementById('kpi-rpps').textContent = d.total_rpps;
+        document.getElementById('kpi-receita').textContent = fmtCurrency(d.receita_mensal);
+        document.getElementById('kpi-anual').textContent = fmtCurrency(d.receita_anual_projetada);
+        document.getElementById('kpi-processos').textContent = d.total_processos;
+        document.getElementById('kpi-analise').textContent = d.em_analise;
+
+        // Bar chart serviços
+        const maxSvc = Math.max(...(d.por_servico.map(s => s.total)), 1);
+        const colors = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4'];
+        document.getElementById('bar-chart-services').innerHTML = d.por_servico.length
+            ? d.por_servico.map((s, i) => `
+                <div class="bar-item">
+                    <div class="bar-label">${s.service_type || 'Serviço'}</div>
+                    <div class="bar-track"><div class="bar-fill" style="width:${(s.total/maxSvc*100).toFixed(1)}%;background:${colors[i%colors.length]};"></div></div>
+                    <div class="bar-val">${fmtCurrency(s.total)}</div>
+                </div>`).join('')
+            : '<div class="empty" style="padding:24px 0;"><p>Nenhum dado de precificação cadastrado</p></div>';
+
+        // Donut processos
+        drawDonut(d);
+
+        // Top instituições
+        document.getElementById('top-institutions-tbody').innerHTML = d.top_institutions.length
+            ? d.top_institutions.map(i => `
+                <tr>
+                    <td style="font-weight:600;">${i.name}</td>
+                    <td>${roleBadge(i.role)}</td>
+                    <td><span class="badge badge-blue">${i.servicos}</span></td>
+                    <td style="color:var(--green-light);font-weight:700;">${fmtCurrency(i.total_price)}</td>
+                </tr>`).join('')
+            : '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px;">Sem dados</td></tr>';
+
+        // Recentes
+        document.getElementById('recent-entities-tbody').innerHTML = d.recentes.length
+            ? d.recentes.map(e => `
+                <tr>
+                    <td style="font-weight:600;">${e.name}</td>
+                    <td>${roleBadge(e.role)}</td>
+                    <td style="color:var(--text-sub);">${fmtDate(e.created_at)}</td>
+                    <td>${e.is_active ? '<span class="badge badge-green">Ativo</span>' : '<span class="badge badge-red">Inativo</span>'}</td>
+                </tr>`).join('')
+            : '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px;">Nenhum cadastro</td></tr>';
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+function drawDonut(d) {
+    const canvas = document.getElementById('donut-canvas');
+    const ctx = canvas.getContext('2d');
+    const total = (d.em_analise||0) + (d.aprovados||0) + (d.devolvidos||0) + (d.rejeitados||0) + ((d.total_processos||0) - (d.em_analise||0) - (d.aprovados||0) - (d.devolvidos||0) - (d.rejeitados||0));
+    const segments = [
+        { label: 'Em Análise', val: d.em_analise||0, color: '#f59e0b' },
+        { label: 'Aprovados',  val: d.aprovados||0,   color: '#10b981' },
+        { label: 'Devolvidos', val: d.devolvidos||0,  color: '#8b5cf6' },
+        { label: 'Rejeitados', val: d.rejeitados||0,  color: '#ef4444' },
+        { label: 'Outros',     val: Math.max(0, total - d.em_analise - d.aprovados - d.devolvidos - d.rejeitados), color: '#3b82f6' }
+    ].filter(s => s.val > 0);
+
+    ctx.clearRect(0, 0, 120, 120);
+    if (!segments.length) { 
+        ctx.beginPath(); ctx.arc(60,60,46,0,Math.PI*2); 
+        ctx.strokeStyle='rgba(148,163,184,0.15)'; ctx.lineWidth=14; ctx.stroke();
+        document.getElementById('donut-legend').innerHTML = '<div class="legend-item"><div class="legend-label" style="text-align:center;color:var(--text-muted);">Sem processos</div></div>';
+        return; 
+    }
+    let angle = -Math.PI/2;
+    segments.forEach(s => {
+        const slice = (s.val / d.total_processos) * Math.PI * 2;
+        ctx.beginPath(); ctx.moveTo(60,60);
+        ctx.arc(60,60,52,angle,angle+slice);
+        ctx.closePath(); ctx.fillStyle = s.color + '30'; ctx.fill();
+        ctx.beginPath(); ctx.arc(60,60,52,angle,angle+slice);
+        ctx.strokeStyle = s.color; ctx.lineWidth = 10; ctx.stroke();
+        angle += slice;
+    });
+    ctx.beginPath(); ctx.arc(60,60,38,0,Math.PI*2);
+    ctx.fillStyle='rgba(6,13,26,0.95)'; ctx.fill();
+    ctx.textAlign='center'; ctx.fillStyle='#f1f5f9'; ctx.font='bold 18px Inter'; ctx.fillText(d.total_processos,60,64);
+    ctx.font='10px Inter'; ctx.fillStyle='#64748b'; ctx.fillText('total',60,76);
+
+    document.getElementById('donut-legend').innerHTML = segments.map(s => `
+        <div class="legend-item">
+            <div class="legend-dot" style="background:${s.color};box-shadow:0 0 6px ${s.color}60;"></div>
+            <div class="legend-label">${s.label}</div>
+            <div class="legend-val">${s.val}</div>
+        </div>`).join('');
+}
+
+// 
+// ENTITIES
+// 
+let typeFilter = 'all';
+
+async function loadEntities() {
+    try {
+        allEntities = await fetch('/api/admin/entities').then(r => r.json());
+        document.getElementById('entities-count').textContent = allEntities.length;
+        renderEntitiesList();
+    } catch(e) { console.error(e); }
+}
+
+function renderEntitiesList() {
+    const search = (document.getElementById('entity-search').value || '').toLowerCase();
+    const list = allEntities.filter(e =>
+        (typeFilter === 'all' || e.type === typeFilter) &&
+        (e.name.toLowerCase().includes(search) || (e.cpf_cnpj||'').includes(search) || (e.email||'').toLowerCase().includes(search))
+    );
+    const container = document.getElementById('entities-list');
+    if (!list.length) {
+        container.innerHTML = '<div class="empty" style="padding:32px 0;"><p>Nenhuma entidade encontrada</p></div>';
+        return;
+    }
+    container.innerHTML = list.map(e => `
+        <div class="entity-item ${e.id === selectedEntityId ? 'selected' : ''}" onclick="selectEntity(${e.id})">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <div class="entity-name">${e.name}</div>
+                ${roleBadge(e.type)}
+            </div>
+            <div class="entity-meta">
+                ${e.email}<br>
+                CNPJ: ${e.cpf_cnpj || '—'}
+                ${e.cidade ? ` · ${e.cidade}/${e.estado||''}` : ''}
+            </div>
+            <div style="margin-top:8px;">
+                ${e.is_active !== 0 ? '<span class="badge badge-green" style="font-size:0.62rem;">Ativo</span>' : '<span class="badge badge-red" style="font-size:0.62rem;">Inativo</span>'}
+            </div>
+        </div>`).join('');
+}
+
+function filterEntities() { renderEntitiesList(); }
+function filterByType(t) {
+    typeFilter = t;
+    ['all','fi','rpps'].forEach(x => document.getElementById('filter-'+x).style.borderColor = '');
+    document.querySelectorAll('#page-entities .btn-ghost').forEach(b => { b.style.borderColor=''; b.style.color=''; });
+    const map = {all:'filter-all', financial_institution:'filter-fi', rpps:'filter-rpps'};
+    const btn = document.getElementById(map[t] || 'filter-all');
+    if (btn) { btn.style.borderColor='rgba(59,130,246,0.5)'; btn.style.color='var(--blue-light)'; }
+    renderEntitiesList();
+}
+
+async function selectEntity(id) {
+    selectedEntityId = id;
+    selectedEntityData = allEntities.find(e => e.id === id);
+    renderEntitiesList();
+    try {
+        const data = await fetch(`/api/admin/entity/${id}/users`).then(r => r.json());
+        document.getElementById('detail-title').textContent = selectedEntityData.name;
+        document.getElementById('detail-header-actions').style.display = 'flex';
+        document.getElementById('entity-detail-body').innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+                <div style="background:rgba(6,13,26,0.5);border:1px solid rgba(148,163,184,0.1);border-radius:10px;padding:16px;">
+                    <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Tipo</div>
+                    <div>${roleBadge(selectedEntityData.type)}</div>
+                </div>
+                <div style="background:rgba(6,13,26,0.5);border:1px solid rgba(148,163,184,0.1);border-radius:10px;padding:16px;">
+                    <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Status</div>
+                    <div>${selectedEntityData.is_active !== 0 ? '<span class="badge badge-green">Ativo</span>' : '<span class="badge badge-red">Inativo</span>'}</div>
+                </div>
+                <div style="background:rgba(6,13,26,0.5);border:1px solid rgba(148,163,184,0.1);border-radius:10px;padding:16px;">
+                    <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">CNPJ</div>
+                    <div style="font-size:0.9rem;">${selectedEntityData.cpf_cnpj || '—'}</div>
+                </div>
+                <div style="background:rgba(6,13,26,0.5);border:1px solid rgba(148,163,184,0.1);border-radius:10px;padding:16px;">
+                    <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Telefone</div>
+                    <div style="font-size:0.9rem;">${selectedEntityData.telefone || '—'}</div>
+                </div>
+                <div style="background:rgba(6,13,26,0.5);border:1px solid rgba(148,163,184,0.1);border-radius:10px;padding:16px;">
+                    <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">E-mail</div>
+                    <div style="font-size:0.85rem;word-break:break-all;">${selectedEntityData.email}</div>
+                </div>
+                <div style="background:rgba(6,13,26,0.5);border:1px solid rgba(148,163,184,0.1);border-radius:10px;padding:16px;">
+                    <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Localização</div>
+                    <div style="font-size:0.9rem;">${selectedEntityData.cidade ? selectedEntityData.cidade+'/'+(selectedEntityData.estado||'') : '—'}</div>
+                </div>
+            </div>
+            <div style="font-size:0.85rem;font-weight:700;color:#f1f5f9;margin-bottom:12px;">
+                Usuários vinculados (${data.users.length}/5)
+            </div>
+            ${data.users.length ? data.users.map(u => `
+                <div style="padding:14px 16px;border:1px solid rgba(148,163,184,0.1);border-radius:10px;margin-bottom:8px;background:rgba(6,13,26,0.3);display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                    <div>
+                        <div style="font-weight:600;font-size:0.9rem;margin-bottom:3px;">${u.name}</div>
+                        <div style="font-size:0.78rem;color:var(--text-sub);">${u.email}</div>
+                    </div>
+                    ${u.is_active ? '<span class="badge badge-green">Ativo</span>' : '<span class="badge badge-red">Inativo</span>'}
+                </div>`).join('') : '<div style="color:var(--text-muted);font-size:0.875rem;text-align:center;padding:20px 0;">Nenhum usuário vinculado</div>'}
+        `;
+    } catch(e) { console.error(e); }
+}
+
+function openRegisterModal() { 
+    document.getElementById('form-register').reset(); 
+    openModal('modal-register'); 
+}
+
+async function submitRegister(e) {
+    e.preventDefault();
+    const pass = document.getElementById('reg-password').value;
+    const pass2 = document.getElementById('reg-password2').value;
+    if (pass !== pass2) { toast('As senhas não coincidem', 'error'); return; }
+    try {
+        const res = await fetch('/api/admin/register-entity', {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                role: document.getElementById('reg-role').value,
+                name: document.getElementById('reg-name').value,
+                razao_social: document.getElementById('reg-razao').value,
+                cpf_cnpj: document.getElementById('reg-cnpj').value,
+                email: document.getElementById('reg-email').value,
+                telefone: document.getElementById('reg-telefone').value,
+                cidade: document.getElementById('reg-cidade').value,
+                estado: document.getElementById('reg-estado').value,
+                endereco: document.getElementById('reg-endereco').value,
+                cep: document.getElementById('reg-cep').value,
+                password: pass
+            })
+        });
+        const d = await res.json();
+        if (d.error) { toast(d.error, 'error'); return; }
+        toast('Entidade cadastrada com sucesso!', 'success');
+        closeModal('modal-register');
+        await loadEntities();
+    } catch(err) { toast('Erro ao cadastrar', 'error'); }
+}
+
+function openEditModal() {
+    if (!selectedEntityData) return;
+    const e = selectedEntityData;
+    document.getElementById('edit-id').value = e.id;
+    document.getElementById('edit-name').value = e.name || '';
+    document.getElementById('edit-email').value = e.email || '';
+    document.getElementById('edit-cnpj').value = e.cpf_cnpj || '';
+    document.getElementById('edit-telefone').value = e.telefone || '';
+    document.getElementById('edit-cidade').value = e.cidade || '';
+    document.getElementById('edit-estado').value = e.estado || '';
+    document.getElementById('edit-endereco').value = e.endereco || '';
+    document.getElementById('edit-cep').value = e.cep || '';
+    document.getElementById('edit-active').value = e.is_active !== 0 ? '1' : '0';
+    openModal('modal-edit');
+}
+
+async function submitEdit(e) {
+    e.preventDefault();
+    const id = document.getElementById('edit-id').value;
+    try {
+        const res = await fetch(`/api/admin/entity/${id}`, {
+            method: 'PUT', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                name: document.getElementById('edit-name').value,
+                email: document.getElementById('edit-email').value,
+                cpf_cnpj: document.getElementById('edit-cnpj').value,
+                telefone: document.getElementById('edit-telefone').value,
+                cidade: document.getElementById('edit-cidade').value,
+                estado: document.getElementById('edit-estado').value,
+                endereco: document.getElementById('edit-endereco').value,
+                cep: document.getElementById('edit-cep').value,
+                is_active: parseInt(document.getElementById('edit-active').value)
+            })
+        });
+        const d = await res.json();
+        if (d.error) { toast(d.error, 'error'); return; }
+        toast('Entidade atualizada!', 'success');
+        closeModal('modal-edit');
+        await loadEntities();
+        await selectEntity(parseInt(id));
+    } catch(err) { toast('Erro ao atualizar', 'error'); }
+}
+
+async function confirmDeleteEntity() {
+    if (!selectedEntityId) return;
+    if (!confirm(`Remover "${selectedEntityData.name}" e todos os seus usuários? Esta ação não pode ser desfeita.`)) return;
+    try {
+        const res = await fetch(`/api/admin/entity/${selectedEntityId}`, { method: 'DELETE' });
+        const d = await res.json();
+        if (d.error) { toast(d.error, 'error'); return; }
+        toast('Entidade removida', 'success');
+        selectedEntityId = null;
+        selectedEntityData = null;
+        document.getElementById('detail-title').textContent = 'Selecione uma entidade';
+        document.getElementById('detail-header-actions').style.display = 'none';
+        document.getElementById('entity-detail-body').innerHTML = '<div class="empty"><p>Entidade removida</p></div>';
+        await loadEntities();
+    } catch(err) { toast('Erro ao remover', 'error'); }
+}
+
+// 
+// PRICING
+// 
+let pricingAllEntities = [];
+
+async function loadPricingEntities() {
+    try {
+        const entities = await fetch('/api/admin/entities').then(r => r.json());
+        pricingAllEntities = entities.filter(e => e.type === 'financial_institution' || e.type === 'financial');
+        renderPricingList();
+    } catch(e) { console.error(e); }
+}
+
+function renderPricingList() {
+    const search = (document.getElementById('pricing-search').value || '').toLowerCase();
+    const list = pricingAllEntities.filter(e => e.name.toLowerCase().includes(search) || (e.cpf_cnpj||'').includes(search));
+    const container = document.getElementById('pricing-entity-list');
+    container.innerHTML = list.map(e => `
+        <div class="entity-item ${e.id === pricingEntityId ? 'selected' : ''}" onclick="selectPricingEntity(${e.id}, '${e.name.replace(/'/g,"\\'")}')">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div class="entity-name">${e.name}</div>
+                ${roleBadge(e.type)}
+            </div>
+            <div class="entity-meta">${e.cpf_cnpj || '—'}</div>
+        </div>`).join('') || '<div class="empty" style="padding:24px 0;"><p>Nenhuma entidade</p></div>';
+}
+
+function filterPricingEntities() { renderPricingList(); }
+
+const SERVICE_TYPES = [
+    { key: 'credenciamento_gestor',        label: 'Credenciamento — Gestor' },
+    { key: 'credenciamento_distribuidor',  label: 'Credenciamento — Distribuidor' },
+    { key: 'credenciamento_administrador', label: 'Credenciamento — Administrador' },
+    { key: 'anuidade',                     label: 'Anuidade de Manutenção' },
+    { key: 'consultoria',                  label: 'Consultoria Regulatória' },
+    { key: 'outros',                       label: 'Outros Serviços' }
+];
+
+async function selectPricingEntity(id, name) {
+    pricingEntityId = id;
+    renderPricingList();
+    document.getElementById('pricing-entity-title').textContent = name;
+    try {
+        const rows = await fetch(`/api/admin/pricing/${id}`).then(r => r.json());
+        const priceMap = {};
+        rows.forEach(r => { priceMap[r.service_type] = r; });
+
+        document.getElementById('pricing-body').innerHTML = `
+            <form onsubmit="savePricing(event, ${id})" style="display:flex;flex-direction:column;gap:16px;">
+                ${SERVICE_TYPES.map(s => {
+                    const cur = priceMap[s.key];
+                    return `
+                    <div style="padding:16px;border:1px solid rgba(148,163,184,0.1);border-radius:12px;background:rgba(6,13,26,0.3);">
+                        <div style="font-size:0.85rem;font-weight:600;margin-bottom:10px;color:#f1f5f9;">${s.label}</div>
+                        <div style="display:grid;grid-template-columns:1fr 160px;gap:10px;">
+                            <div>
+                                <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Valor</div>
+                                <div class="price-input">
+                                    <span>R$</span>
+                                    <input type="number" name="price_${s.key}" step="0.01" min="0"
+                                        value="${cur ? cur.price : ''}" placeholder="0,00">
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Ciclo</div>
+                                <select name="cycle_${s.key}" class="form-control" style="padding:10px 12px;">
+                                    <option value="monthly" ${(!cur || cur.billing_cycle==='monthly') ? 'selected' : ''}>Mensal</option>
+                                    <option value="annual" ${cur && cur.billing_cycle==='annual' ? 'selected' : ''}>Anual</option>
+                                    <option value="once" ${cur && cur.billing_cycle==='once' ? 'selected' : ''}>Único</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-top:10px;">
+                            <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Observações</div>
+                            <input type="text" name="notes_${s.key}" class="form-control" style="padding:9px 12px;"
+                                placeholder="Condições especiais, descontos..." value="${cur ? (cur.notes||'') : ''}">
+                        </div>
+                    </div>`;
+                }).join('')}
+                <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+                    <button type="submit" class="btn btn-success">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        Salvar Precificação
+                    </button>
+                </div>
+            </form>`;
+    } catch(e) { console.error(e); toast('Erro ao carregar precificação', 'error'); }
+}
+
+async function savePricing(event, entityId) {
+    event.preventDefault();
+    const form = event.target;
+    const promises = SERVICE_TYPES.map(s => {
+        const priceEl = form.querySelector(`[name="price_${s.key}"]`);
+        const cycleEl = form.querySelector(`[name="cycle_${s.key}"]`);
+        const notesEl = form.querySelector(`[name="notes_${s.key}"]`);
+        const price = parseFloat(priceEl.value);
+        if (isNaN(price) || price < 0) return Promise.resolve();
+        return fetch(`/api/admin/pricing/${entityId}`, {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                service_type: s.key, price,
+                billing_cycle: cycleEl.value,
+                notes: notesEl.value
+            })
+        });
+    });
+    try {
+        await Promise.all(promises);
+        toast('Precificação salva com sucesso!', 'success');
+        await selectPricingEntity(entityId, document.getElementById('pricing-entity-title').textContent);
+    } catch(err) { toast('Erro ao salvar precificação', 'error'); }
+}
+
+// 
+// PROCESSES
+// 
+async function loadProcesses() {
+    try {
+        allProcesses = await fetch('/api/admin/all-processes').then(r => r.json());
+        filterProcessesTable();
+    } catch(e) { console.error(e); }
+}
+
+function filterProcessesTable() {
+    const search = (document.getElementById('proc-search').value || '').toLowerCase();
+    const filterStatus = document.getElementById('proc-filter-status').value;
+    const list = allProcesses.filter(p =>
+        (!filterStatus || p.status === filterStatus) &&
+        (!search || (p.financial_institution_name||'').toLowerCase().includes(search) ||
+                    (p.rpps_name||'').toLowerCase().includes(search) ||
+                    (p.custom_id||'').toLowerCase().includes(search))
+    );
+    const tbody = document.getElementById('processes-tbody');
+    if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:40px;">Nenhum processo encontrado</td></tr>';
+        return;
+    }
+    tbody.innerHTML = list.map(p => `
+        <tr>
+            <td><span style="font-family:monospace;font-size:0.82rem;color:var(--blue-light);">${p.custom_id || '#'+p.id}</span></td>
+            <td style="font-weight:500;">${p.financial_institution_name || '—'}</td>
+            <td style="color:var(--text-sub);">${p.rpps_name || '—'}</td>
+            <td><span class="badge badge-blue" style="font-size:0.68rem;">${p.credentialing_type}</span></td>
+            <td>${statusBadge(p.status)}</td>
+            <td><span class="badge badge-gray">${p.doc_count}</span></td>
+            <td style="color:var(--text-sub);font-size:0.82rem;">${fmtDate(p.created_at)}</td>
+        </tr>`).join('');
+}
+
+// 
+// USERS PAGE
+// 
+async function loadUsersEntityList() {
+    try {
+        const entities = await fetch('/api/admin/entities').then(r => r.json());
+        document.getElementById('users-entity-list').innerHTML = entities.map(e => `
+            <div class="entity-item ${e.id === usersEntityId ? 'selected' : ''}" onclick="selectUsersEntity(${e.id})">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <div class="entity-name">${e.name}</div>
+                    ${roleBadge(e.type)}
+                </div>
+                <div class="entity-meta">${e.user_count||0}/5 usuários</div>
+            </div>`).join('') || '<div class="empty" style="padding:24px 0;"><p>Nenhuma entidade</p></div>';
+    } catch(e) { console.error(e); }
+}
+
+async function selectUsersEntity(id) {
+    usersEntityId = id;
+    document.getElementById('btn-add-user').style.display = 'inline-flex';
+    document.getElementById('add-user-entity-id').value = id;
+    await loadUsersEntityList();
+    try {
+        const data = await fetch(`/api/admin/entity/${id}/users`).then(r => r.json());
+        document.getElementById('users-entity-title').textContent = data.entity_name;
+        const container = document.getElementById('users-slots-container');
+        let html = '<div style="display:flex;flex-direction:column;gap:12px;">';
+        for (let i = 1; i <= 5; i++) {
+            const u = data.users.find(x => x.user_number === i);
+            if (u) {
+                html += `<div style="padding:18px;border:1px solid rgba(148,163,184,0.15);border-radius:12px;background:rgba(13,27,46,0.5);display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                    <div>
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                            <span style="font-size:0.7rem;color:var(--text-muted);background:rgba(148,163,184,0.1);padding:2px 8px;border-radius:6px;">Slot ${i}</span>
+                            ${u.is_active ? '<span class="badge badge-green" style="font-size:0.62rem;">Ativo</span>' : '<span class="badge badge-red" style="font-size:0.62rem;">Inativo</span>'}
+                        </div>
+                        <div style="font-weight:600;font-size:0.95rem;">${u.name}</div>
+                        <div style="font-size:0.8rem;color:var(--text-sub);">${u.email}</div>
+                        ${u.last_login ? `<div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Último acesso: ${new Date(u.last_login).toLocaleString('pt-BR')}</div>` : ''}
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button class="btn btn-ghost btn-sm" onclick="genToken(${u.id})">Token</button>
+                        ${u.is_active
+                            ? `<button class="btn btn-danger btn-sm" onclick="toggleUser(${u.id},false,${id})">Desativar</button>`
+                            : `<button class="btn btn-success btn-sm" onclick="toggleUser(${u.id},true,${id})">Ativar</button>`}
+                    </div>
+                </div>`;
+            } else {
+                html += `<div style="padding:18px;border:2px dashed rgba(148,163,184,0.12);border-radius:12px;background:rgba(6,13,26,0.2);display:flex;align-items:center;justify-content:space-between;">
+                    <div style="color:var(--text-muted);font-size:0.875rem;display:flex;align-items:center;gap:8px;">
+                        <span style="background:rgba(148,163,184,0.08);padding:2px 8px;border-radius:6px;font-size:0.7rem;">Slot ${i}</span>
+                        Slot disponível
+                    </div>
+                    <button class="btn btn-ghost btn-sm" onclick="openAddUserModal()">+ Adicionar</button>
+                </div>`;
+            }
+        }
+        html += '</div>';
+        container.innerHTML = html;
+    } catch(e) { console.error(e); }
+}
+
+function openAddUserModal() {
+    if (!usersEntityId) return;
+    document.getElementById('form-add-user').reset();
+    document.getElementById('add-user-entity-id').value = usersEntityId;
+    document.getElementById('add-user-password').value = 'temp123';
+    openModal('modal-add-user');
+}
+
+async function submitAddUser(e) {
+    e.preventDefault();
+    const entityId = document.getElementById('add-user-entity-id').value;
+    try {
+        const res = await fetch(`/api/admin/entity/${entityId}/users`, {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                name: document.getElementById('add-user-name').value,
+                email: document.getElementById('add-user-email').value,
+                cpf_cnpj: document.getElementById('add-user-cpf').value,
+                password: document.getElementById('add-user-password').value
+            })
+        });
+        const d = await res.json();
+        if (d.error) { toast(d.error, 'error'); return; }
+        toast('Usuário adicionado!', 'success');
+        closeModal('modal-add-user');
+        await selectUsersEntity(parseInt(entityId));
+    } catch(err) { toast('Erro ao adicionar usuário', 'error'); }
+}
+
+async function toggleUser(userId, active, entityId) {
+    try {
+        await fetch(`/api/admin/users/${userId}`, {
+            method: 'PUT', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ is_active: active })
+        });
+        toast(active ? 'Usuário ativado' : 'Usuário desativado', 'success');
+        await selectUsersEntity(entityId);
+    } catch(e) { toast('Erro', 'error'); }
+}
+
+async function genToken(userId) {
+    try {
+        const d = await fetch(`/api/admin/users/${userId}/reset-token`, { method: 'POST' }).then(r => r.json());
+        tokenUrlValue = d.reset_url;
+        document.getElementById('token-url-display').textContent = d.reset_url;
+        openModal('modal-token');
+    } catch(e) { toast('Erro ao gerar token', 'error'); }
+}
+
+function copyTokenUrl() {
+    navigator.clipboard.writeText(tokenUrlValue).then(() => toast('Link copiado!', 'success'));
+}
+
+// 
+// OVERRIDES - MODELO DE PRECIFICACAO ANUAL POR CADASTRO
+// 
+async function loadDashboard() {
+    try {
+        const d = await fetch('/api/admin/revenue-dashboard').then(r => r.json());
+
+        document.getElementById('kpi-ifs').textContent = Number(d.total_ifs || 0);
+        document.getElementById('kpi-rpps').textContent = Number(d.total_rpps || 0);
+        document.getElementById('kpi-receita').textContent = fmtCurrency(Number(d.receita_recebida || 0));
+        document.getElementById('kpi-anual').textContent = fmtCurrency(Number(d.receita_a_receber || 0));
+        document.getElementById('kpi-processos').textContent = Number(d.total_processos || 0);
+        document.getElementById('kpi-analise').textContent = Number(d.em_analise || 0);
+
+        const kpiLabels = document.querySelectorAll('#kpi-grid .stat-label');
+        const kpiDeltas = document.querySelectorAll('#kpi-grid .stat-delta');
+        if (kpiLabels.length >= 4) {
+            kpiLabels[2].textContent = 'Receita Recebida';
+            kpiLabels[3].textContent = 'Receita a Receber';
+        }
+        if (kpiDeltas.length >= 4) {
+            kpiDeltas[2].textContent = 'valor recebido (anual)';
+            kpiDeltas[3].textContent = 'saldo pendente anual';
+        }
+
+        const tipo = Array.isArray(d.por_tipo_entidade) ? d.por_tipo_entidade : [];
+        const maxVal = Math.max(...tipo.map(s => Number(s.total || 0)), 1);
+        const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+        document.getElementById('bar-chart-services').innerHTML = tipo.length
+            ? tipo.map((s, i) => `
+                <div class="bar-item">
+                    <div class="bar-label">${s.entity_type || 'Entidade'}</div>
+                    <div class="bar-track"><div class="bar-fill" style="width:${(Number(s.total || 0)/maxVal*100).toFixed(1)}%;background:${colors[i%colors.length]};"></div></div>
+                    <div class="bar-val">${fmtCurrency(Number(s.total || 0))}</div>
+                </div>`).join('')
+            : '<div class="empty" style="padding:24px 0;"><p>Nenhum contrato anual cadastrado</p></div>';
+
+        const topTable = document.getElementById('top-institutions-tbody').closest('table');
+        if (topTable) {
+            const th = topTable.querySelectorAll('thead th');
+            if (th.length >= 4) {
+                th[2].textContent = 'Contrato Anual';
+                th[3].textContent = 'A Receber';
+            }
+        }
+
+        const top = Array.isArray(d.top_institutions) ? d.top_institutions : [];
+        document.getElementById('top-institutions-tbody').innerHTML = top.length
+            ? top.map(i => `
+                <tr>
+                    <td style="font-weight:600;">${i.name}</td>
+                    <td>${roleBadge(i.role)}</td>
+                    <td style="color:var(--text-sub);font-weight:700;">${fmtCurrency(Number(i.annual_value || 0))}</td>
+                    <td style="color:var(--green-light);font-weight:700;">${fmtCurrency(Number(i.amount_pending || 0))}</td>
+                </tr>`).join('')
+            : '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px;">Sem dados</td></tr>';
+
+        const recentes = Array.isArray(d.recentes) ? d.recentes : [];
+        document.getElementById('recent-entities-tbody').innerHTML = recentes.length
+            ? recentes.map(e => `
+                <tr>
+                    <td style="font-weight:600;">${e.name}</td>
+                    <td>${roleBadge(e.role)}</td>
+                    <td style="color:var(--text-sub);">${fmtDate(e.created_at)}</td>
+                    <td>${e.is_active ? '<span class="badge badge-green">Ativo</span>' : '<span class="badge badge-red">Inativo</span>'}</td>
+                </tr>`).join('')
+            : '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px;">Nenhum cadastro</td></tr>';
+
+        drawDonut(d);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function loadPricingEntities() {
+    try {
+        const entities = await fetch('/api/admin/entities').then(r => r.json());
+        pricingAllEntities = entities.filter(e =>
+            e.type === 'financial_institution' || e.type === 'financial' || e.type === 'rpps'
+        );
+        renderPricingList();
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+function renderPricingList() {
+    const search = (document.getElementById('pricing-search').value || '').toLowerCase();
+    const list = pricingAllEntities.filter(e =>
+        e.name.toLowerCase().includes(search) || (e.cpf_cnpj || '').includes(search)
+    );
+    const container = document.getElementById('pricing-entity-list');
+    container.innerHTML = list.map(e => `
+        <div class="entity-item ${e.id === pricingEntityId ? 'selected' : ''}" onclick="selectPricingEntity(${e.id}, '${e.name.replace(/'/g, "\\'")}')">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div class="entity-name">${e.name}</div>
+                ${roleBadge(e.type)}
+            </div>
+            <div class="entity-meta">${e.cpf_cnpj || '—'}</div>
+        </div>`).join('') || '<div class="empty" style="padding:24px 0;"><p>Nenhuma entidade</p></div>';
+}
+
+async function selectPricingEntity(id, name) {
+    pricingEntityId = id;
+    renderPricingList();
+    document.getElementById('pricing-entity-title').textContent = `Contrato Anual — ${name}`;
+    try {
+        const row = await fetch(`/api/admin/pricing/${id}`).then(r => r.json());
+        const annualValue = Number(row.annual_value || 0);
+        const amountReceived = Number(row.amount_received || 0);
+        const amountPending = Number(row.amount_pending || Math.max(annualValue - amountReceived, 0));
+
+        document.getElementById('pricing-body').innerHTML = `
+            <form onsubmit="savePricing(event, ${id})" style="display:flex;flex-direction:column;gap:16px;">
+                <div style="padding:16px;border:1px solid rgba(148,163,184,0.1);border-radius:12px;background:rgba(6,13,26,0.3);">
+                    <div style="font-size:0.85rem;font-weight:600;margin-bottom:10px;color:#f1f5f9;">Plano anual por cadastro</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                        <div>
+                            <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Valor anual acordado</div>
+                            <div class="price-input">
+                                <span>R$</span>
+                                <input type="number" name="annual_value" step="0.01" min="0" value="${annualValue}" placeholder="0,00">
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Valor recebido</div>
+                            <div class="price-input">
+                                <span>R$</span>
+                                <input type="number" name="amount_received" step="0.01" min="0" value="${amountReceived}" placeholder="0,00">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top:10px;padding:10px;border:1px dashed rgba(59,130,246,0.3);border-radius:10px;color:var(--text-sub);font-size:0.85rem;">
+                        Saldo a receber: <strong style="color:#34d399;">${fmtCurrency(amountPending)}</strong>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+                        <div>
+                            <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Início da vigência</div>
+                            <input type="date" name="contract_start" class="form-control" style="padding:9px 12px;" value="${row.contract_start || ''}">
+                        </div>
+                        <div>
+                            <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Fim da vigência</div>
+                            <input type="date" name="contract_end" class="form-control" style="padding:9px 12px;" value="${row.contract_end || ''}">
+                        </div>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Observações</div>
+                        <input type="text" name="notes" class="form-control" style="padding:9px 12px;" placeholder="Condições comerciais..." value="${row.notes || ''}">
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+                    <button type="submit" class="btn btn-success">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        Salvar Contrato
+                    </button>
+                </div>
+            </form>`;
+    } catch (e) {
+        console.error(e);
+        toast('Erro ao carregar contrato anual', 'error');
+    }
+}
+
+async function savePricing(event, entityId) {
+    event.preventDefault();
+    const form = event.target;
+    const annualValue = parseFloat(form.querySelector('[name="annual_value"]').value || '0');
+    const amountReceived = parseFloat(form.querySelector('[name="amount_received"]').value || '0');
+
+    if (Number.isNaN(annualValue) || annualValue < 0 || Number.isNaN(amountReceived) || amountReceived < 0) {
+        toast('Informe valores válidos', 'error');
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/admin/pricing/${entityId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                annual_value: annualValue,
+                amount_received: amountReceived,
+                contract_start: form.querySelector('[name="contract_start"]').value || null,
+                contract_end: form.querySelector('[name="contract_end"]').value || null,
+                notes: form.querySelector('[name="notes"]').value || ''
+            })
+        });
+        const d = await res.json();
+        if (d.error) {
+            toast(d.error, 'error');
+            return;
+        }
+        toast('Contrato anual salvo com sucesso!', 'success');
+        await selectPricingEntity(entityId, document.getElementById('pricing-entity-title').textContent.replace('Contrato Anual — ', ''));
+        await loadDashboard();
+    } catch (err) {
+        toast('Erro ao salvar contrato anual', 'error');
+    }
+}
+
+// 
+// INIT
+// 
+(async function init() {
+    try {
+        const u = await fetch('/api/user/info').then(r => r.json());
+        if (u.name) {
+            const shortName = u.name.split(' ')[0].toUpperCase();
+            document.getElementById('admin-name').textContent = shortName;
+            document.getElementById('admin-avatar').textContent = shortName.charAt(0) || 'A';
+        }
+    } catch(e) {}
+    loadDashboard();
+})();
+</script>
+
+</body>
+</html>
+

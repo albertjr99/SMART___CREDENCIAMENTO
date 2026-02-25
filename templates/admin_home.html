@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0b1220;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #0a1628, #0c2340);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.35);
+            height: 64px;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .brand { font-size: 1.15rem; font-weight: 700; }
+        .actions { display: flex; gap: 10px; }
+        .btn {
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            color: #e2e8f0;
+            background: rgba(15, 23, 42, 0.65);
+            padding: 9px 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .container {
+            max-width: 1250px;
+            margin: 28px auto;
+            padding: 0 18px 28px;
+        }
+        .hero {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(20, 35, 66, 0.72));
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .hero h1 { font-size: 1.9rem; margin-bottom: 6px; }
+        .hero p { color: #94a3b8; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .card {
+            background: linear-gradient(140deg, rgba(15, 23, 42, 0.9), rgba(30, 58, 95, 0.5));
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 14px;
+            padding: 14px;
+        }
+        .label { color: #94a3b8; font-size: 12px; text-transform: uppercase; }
+        .value { font-size: 30px; font-weight: 800; margin-top: 6px; }
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .action-card {
+            background: linear-gradient(140deg, rgba(15, 23, 42, 0.9), rgba(30, 58, 95, 0.45));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 14px;
+            padding: 16px;
+            text-decoration: none;
+            color: #e2e8f0;
+            display: block;
+        }
+        .action-card p { color: #94a3b8; margin-top: 6px; font-size: 0.95rem; }
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .actions-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="brand">Painel Administrativo</div>
+        <div class="actions">
+            <a class="btn" href="/admin/users">Gerenciar Usuarios</a>
+            <a class="btn" href="/logout">Sair</a>
+        </div>
+    </div>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Visao Geral do Sistema</h1>
+            <p>Gerencie usuarios, acompanhe status de processos e acesse os modulos administrativos.</p>
+        </section>
+
+        <section class="grid">
+            <div class="card">
+                <div class="label">Total de Processos</div>
+                <div class="value" id="total_processos">0</div>
+            </div>
+            <div class="card">
+                <div class="label">Em Analise</div>
+                <div class="value" id="em_analise">0</div>
+            </div>
+            <div class="card">
+                <div class="label">Aprovados</div>
+                <div class="value" id="aprovados">0</div>
+            </div>
+            <div class="card">
+                <div class="label">Devolvidos</div>
+                <div class="value" id="devolvidos">0</div>
+            </div>
+        </section>
+
+        <section class="actions-grid">
+            <a class="action-card" href="/admin/users">
+                <strong>Gerenciar Usuarios</strong>
+                <p>Criar, editar e controlar acessos de IFs e RPPS.</p>
+            </a>
+            <a class="action-card" href="/admin/category/gestor">
+                <strong>Processos Gestor</strong>
+                <p>Visualize os processos de gestao de recursos.</p>
+            </a>
+            <a class="action-card" href="/admin/category/distribuidor">
+                <strong>Processos Distribuidor</strong>
+                <p>Visualize os processos de distribuicao.</p>
+            </a>
+        </section>
+    </main>
+
+    <script>
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/admin/stats');
+                const data = await res.json();
+                document.getElementById('total_processos').textContent = data.total_processos || 0;
+                document.getElementById('em_analise').textContent = data.em_analise || 0;
+                document.getElementById('aprovados').textContent = data.aprovados || 0;
+                document.getElementById('devolvidos').textContent = data.devolvidos || 0;
+            } catch (e) {
+                console.error('Erro ao carregar estatisticas', e);
+            }
+        }
+        loadStats();
+    </script>
+</body>
+</html>
