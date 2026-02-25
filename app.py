@@ -29,7 +29,7 @@ if os.path.exists('.env'):
 from ai_analyzer_rigorous import analyze_document_rigorous
 
 # Importar validador TCEES
-from tcees_validator import validate_pdf_with_tcees, validate_multiple_pdfs
+from tcees_client import validate_pdf_with_tcees, validate_multiple_pdfs
 
 # Importar assinador digital
 from digital_signer import digital_signer, PYHANKO_AVAILABLE
@@ -5274,4 +5274,5 @@ def run_expiry_check_now():
 if __name__ == '__main__':
     start_background_jobs()
     app.run(debug=True, host='0.0.0.0', port=5000)
+
 
